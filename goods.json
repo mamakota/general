@@ -1,16 +1,6 @@
-'use strict';
 
-const modalTitle = document.querySelector('.modal__title');
-const modalForm = document.querySelector('.modal__form');
-const modalCheckbox = document.querySelector('.modal__checkbox');
-const modalDiscountInput = document.querySelector('.modal__input_discount');
-const table = document.querySelector('.table__body');
-
-const overlay = document.querySelector('.overlay');
-
-overlay.classList.remove('active');
-
-const goods = [{
+[
+  {
     "id": 1,
     "title": "Смартфон Xiaomi 11T 8/128GB",
     "price": 27000,
@@ -66,38 +56,4 @@ const goods = [{
       "big": "img/lan_proconnect43-3-25-b.jpg"
     }
   }
-];
-
-
-const createRow = (obj) => {
-  const string = `<tr>
-  <td class="table__cell ">2</td>
-  <td class="table__cell table__cell_left table__cell_name" data-id="${obj.id}">
-    <span class="table__cell-id">id: ${obj.id}</span>${obj.title}</td>
-  <td class="table__cell table__cell_left">${obj.category}</td>
-  <td class="table__cell">${obj.units}</td>
-  <td class="table__cell">${obj.count}</td>
-  <td class="table__cell">$${obj.price}</td>
-  <td class="table__cell">$${obj.count * obj.price}</td>
-  <td class="table__cell table__cell_btn-wrapper">
-    <button class="table__btn table__btn_pic"></button>
-    <button class="table__btn table__btn_edit"></button>
-    <button class="table__btn table__btn_del"></button>
-  </td>
-</tr>`;
-
-  return string;
-};
-
-const renderGoods = ([...arr]) => {
-  // for (let item of arr) {
-  //   console.log(item);
-  // }
-
-
-  arr.forEach(item => {
-    table.insertAdjacentHTML('beforeend', createRow(item));
-  })
-};
-
-renderGoods(goods);
+]
