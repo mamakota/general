@@ -90,11 +90,14 @@ const createRow = (obj) => {
 };
 
 const renderGoods = ([...arr]) => {
+  // for (let item of arr) {
+  //   console.log(item);
+  // }
+
 
   arr.forEach(item => {
     table.insertAdjacentHTML('beforeend', createRow(item));
   })
-
 };
 
 renderGoods(goods);
