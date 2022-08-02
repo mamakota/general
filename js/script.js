@@ -1,19 +1,29 @@
-'use strict';
+import render from './modules/render.js';
+const {
+  putRowIndex,
+  getModalPrice,
+  getTotalGoodPrice,
+  createRow,
+  renderGoods,
+} = render;
 
-const modalTitle = document.querySelector('.modal__title');
-const modalForm = document.querySelector('.modal__form');
-const modalCheckbox = document.querySelector('.modal__checkbox');
-const modalDiscountInput = document.querySelector('.modal__input_discount');
-const table = document.querySelector('.table__body');
-const overlay = document.querySelector('.overlay');
-overlay.classList.remove('active');
+import functional from './modules/functional.js';
+const {
+  openModal,
+  closeModal,
+  deleteItemRow,
+} = functional;
 
-const btnAdd = document.querySelector('.panel__add-goods');
-const btnClose = document.querySelector('.modal__close');
-const modal = document.querySelector('.modal');
-const vendorId = document.querySelector('.vendor-code__id');
-const modalTotalPrice = document.querySelector('.modal__total-price');
-const crmTotalPrice = document.querySelector('.crm__total-price');
+import elements from './modules/elements.js';
+const {
+  modalForm,
+  modalCheckbox,
+  modalDiscountInput,
+  table,
+  overlay,
+  btnAdd,
+  vendorId,
+} = elements;
 
 const goods = [{
     'id': 1,
@@ -73,116 +83,62 @@ const goods = [{
   },
 ];
 
-const getRandomNumber = (сharacters) => {
-  const number = Math.round(Math.random() * Math.pow(10, сharacters));
-  return number;
-};
+{
+  const init = (goods) => {
+    renderGoods(goods);
+    getTotalGoodPrice(goods);
+    btnAdd.addEventListener('click', openModal);
 
-const createRow = (obj) => {
-  const string = `<tr class="table__row">
-  <td class="table__cell ">2</td>
-  <td class="table__cell table__cell_left table__cell_name" data-id="${obj.id}">
-    <span class="table__cell-id">id: ${obj.id}</span>${obj.title}</td>
-  <td class="table__cell table__cell_left">${obj.category}</td>
-  <td class="table__cell">${obj.units}</td>
-  <td class="table__cell">${obj.count}</td>
-  <td class="table__cell">$${obj.price}</td>
-  <td class="table__cell">$${obj.count * obj.price}</td>
-  <td class="table__cell table__cell_btn-wrapper">
-    <button class="table__btn table__btn_pic"></button>
-    <button class="table__btn table__btn_edit"></button>
-    <button class="table__btn table__btn_del"></button>
-  </td>
-</tr>`;
+    overlay.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target.classList.contains('overlay') ||
+        target.closest('.modal__close')) {
+        closeModal();
+      }
+    });
 
-  return string;
-};
+    table.addEventListener('click', e => {
+      if (e.target.closest('.table__btn_del')) {
+        const row = e.target.closest('.table__row');
+        row.remove();
+        const rowId = row.children[1].dataset.id;
+        deleteItemRow(goods, rowId);
+      }
+    });
 
-const renderGoods = ([...arr]) => {
-  arr.forEach(item => {
-    table.insertAdjacentHTML('beforeend', createRow(item));
-  });
-};
+    modalCheckbox.addEventListener('change', () => {
+      if (modalCheckbox.checked) {
+        modalDiscountInput.disabled = false;
+      } else {
+        modalDiscountInput.disabled = true;
+        modalDiscountInput.value = '';
+      }
+    });
 
-const openModal = () => {
-  overlay.classList.add('active');
-  const goodId = getRandomNumber(14);
-  vendorId.textContent = goodId;
-};
+    modalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
 
-const closeModal = () => {
-  overlay.classList.remove('active');
-};
+      const formData = new FormData(e.target);
+      const newElem = Object.fromEntries(formData);
 
-const getModalPrice = () => {
-  const count = modalForm.count.value;
-  const price = modalForm.price.value;
-  modalForm.total.value = `$ ${count*price}`;
-};
+      newElem.id = vendorId.textContent;
+      goods.push(newElem);
 
-const getTotalGoodPrice = (goods) => {
-  let totalPrice = 0;
-  goods.forEach(item => {
-    totalPrice += item.price * item.count;
-  });
-  crmTotalPrice.textContent = `$ ${totalPrice}`;
-};
+      const newRow = createRow(newElem);
 
-renderGoods(goods);
-getTotalGoodPrice(goods);
+      table.insertAdjacentHTML('beforeend', newRow);
 
-btnAdd.addEventListener('click', openModal);
+      closeModal();
+      modalForm.reset();
+      getTotalGoodPrice(goods);
+      putRowIndex();
+    });
 
-overlay.addEventListener('click', (e) => {
-  const target = e.target;
-  if (target.classList.contains('overlay') || target.closest('.modal__close')) {
-    closeModal();
-  }
-});
+    modalForm.count.addEventListener('change', getModalPrice);
+    modalForm.price.addEventListener('change', getModalPrice);
+  };
 
-const deleteItemRow = ([...arr], id) => {
-  arr.forEach((item, index) => {
-    if (item.id == id) {
-      goods.splice(index, 1);
-    }
-  });
-};
+  window.crmInit = init;
+}
 
-table.addEventListener('click', e => {
-  if (e.target.closest('.table__btn_del')) {
-    const row = e.target.closest('.table__row');
-    row.remove();
-    const rowId = row.children[1].dataset.id;
-    deleteItemRow(goods, rowId);
-  }
-});
-
-modalCheckbox.addEventListener('change', () => {
-  if (modalCheckbox.checked) {
-    modalDiscountInput.disabled = false;
-  } else {
-    modalDiscountInput.disabled = true;
-    modalDiscountInput.value = '';
-  }
-});
-
-modalForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(e.target);
-  const newElem = Object.fromEntries(formData);
-
-  newElem.id = vendorId.textContent;
-  goods.push(newElem);
-
-  const newRow = createRow(newElem);
-
-  table.insertAdjacentHTML('beforeend', newRow);
-
-  closeModal();
-  modalForm.reset();
-  getTotalGoodPrice(goods);
-});
-
-modalForm.count.addEventListener('change', getModalPrice);
-modalForm.price.addEventListener('change', getModalPrice);
+crmInit(goods);
