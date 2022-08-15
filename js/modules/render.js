@@ -37,7 +37,7 @@ const createRow = (obj) => {
   <td class="table__cell">$${obj.price}</td>
   <td class="table__cell">$${obj.count * obj.price}</td>
   <td class="table__cell table__cell_btn-wrapper">
-    <button class="table__btn table__btn_pic"></button>
+    <button class="table__btn table__btn_pic" data-pic="https://steamuserimages-a.akamaihd.net/ugc/776234950410894383/64AAB79ABC73B74A688A2A9E5D5279B8C821DDC7/"></button>
     <button class="table__btn table__btn_edit"></button>
     <button class="table__btn table__btn_del"></button>
   </td>

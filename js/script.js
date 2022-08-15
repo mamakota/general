@@ -104,6 +104,16 @@ const goods = [{
         const rowId = row.children[1].dataset.id;
         deleteItemRow(goods, rowId);
       }
+
+      if (e.target.closest('.table__btn_pic')) {
+        const url = e.target.dataset.pic;
+        const win = open('about:blank', '', 'width=800,height=600,location=no');
+        win.document.body.style.background = `url('${url}') no-repeat`;
+        win.document.body.style.backgroundSize = `cover`;
+        win.document.body.style.backgroundPosition = `center`;
+        // console.log(screen.height, screen.width);
+        win.moveTo(screen.width / 2 - 400, screen.height / 2 - 300);
+      }
     });
 
     modalCheckbox.addEventListener('change', () => {
